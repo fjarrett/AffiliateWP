@@ -291,7 +291,7 @@ class Affiliate_WP_Settings {
 					),
 					'admin_notification_emails' => array(
 						'name' => __( 'Admin Notification Emails', 'affiliate-wp' ),
-						'desc' => __( 'Enter the email address(es) that should receive a notification anytime an affiliate registers, one per line', 'affiliate-wp' ),
+						'desc' => '<p class="description">' . __( 'Enter the email address(es) that should receive a notification anytime an affiliate registers, one per line', 'affiliate-wp' ) . '</p>',
 						'type' => 'textarea',
 						'std'  => get_bloginfo( 'admin_email' )
 					),

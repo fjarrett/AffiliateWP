@@ -55,7 +55,9 @@ class Affiliate_WP_Emails {
 				$subject  = affwp_do_email_tags( $subject, $args );
 
 				// message
-				$message  = $this->get_registration_body( $args );
+				$message  = $this->get_email_body_header();
+				$message  .= $this->get_registration_body( $args );
+				$message  .= $this->get_email_body_footer();
 
 				if ( affiliate_wp()->settings->get( 'require_approval' ) ) {
 					$message .= sprintf( "\n\nReview pending applications: %s\n\n", admin_url( 'admin.php?page=affiliate-wp-affiliates&status=pending' ) );
@@ -102,6 +104,8 @@ class Affiliate_WP_Emails {
 
 		$headers   = array();
 		$headers[] = 'From: ' . stripslashes_deep( html_entity_decode( get_bloginfo( 'name' ), ENT_COMPAT, 'UTF-8' ) ) . ' <' . get_option( 'admin_email' ) . '>';
+		$headers[] = 'Reply-To: ' . get_option('admin_email');
+		$headers[] = "Content-Type: text/html; charset=utf-8\r\n";
 		$headers   = apply_filters( 'affwp_email_headers', $headers );
 
 		wp_mail( $email, $subject, $message, $headers );
@@ -125,7 +129,7 @@ class Affiliate_WP_Emails {
 
 		$email_body = affwp_do_email_tags( $email, $args );
 
-		return apply_filters( 'affwp_default_registration_email', $email_body );
+		return apply_filters( 'affwp_default_registration_email', wpautop( $email_body ) );
 	}
 
 	/**
@@ -142,6 +146,41 @@ class Affiliate_WP_Emails {
 		$emails = array_map( 'trim', explode( "\n", $emails ) );
 
 		return apply_filters( 'affwp_admin_notification_emails', $emails );
+	}
+
+	/**
+	 * Email Template Header
+	 *
+	 * @since 1.2
+	 * @return string Email template header
+	 */
+	public function get_email_body_header() {
+		ob_start();
+		?>
+		<html>
+		<head>
+			<style type="text/css">#outlook a { padding: 0; }</style>
+		</head>
+		<body dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>">
+		<?php
+		do_action( 'affwp_email_body_header' );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Email Template Footer
+	 *
+	 * @since 1.2
+	 * @return string Email template footer
+	 */
+	public function get_email_body_footer() {
+		ob_start();
+		do_action( 'affwp_email_body_footer' );
+		?>
+		</body>
+		</html>
+		<?php
+		return ob_get_clean();
 	}
 
 }
