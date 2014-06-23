@@ -258,6 +258,11 @@ function affwp_setup_email_tags() {
 			'description' => __( 'The affiliate login URL', 'affiliate-wp' ),
 			'function'    => 'affwp_email_tag_login_url'
 		),
+		array(
+			'tag'         => 'referral_amount',
+			'description' => __( 'The commission amount rewarded to the affiliate', 'affiliate-wp' ),
+			'function'    => 'affwp_email_tag_referral_amount'
+		),
 
 	);
 
@@ -307,7 +312,6 @@ function affwp_email_tag_site_url() {
 	return home_url();
 }
 
-
 /**
  * Email template tag: login_url
  * The affiliate login URL
@@ -318,3 +322,17 @@ function affwp_email_tag_site_url() {
 function affwp_email_tag_login_url() {
 	return affiliate_wp()->login->get_login_url();
 }
+
+/**
+ * Email template tag: login_url
+ * The affiliate login URL
+ *
+ *
+ * @return string affiliate login URL
+ */
+function affwp_email_tag_referral_amount( $args ) {
+	return html_entity_decode( affwp_currency_filter( $args['amount'] ), ENT_COMPAT, 'UTF-8' );
+}
+
+
+

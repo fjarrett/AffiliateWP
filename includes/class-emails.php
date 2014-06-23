@@ -39,6 +39,9 @@ class Affiliate_WP_Emails {
 
 	public function notification( $type = '', $args = array() ) {
 
+		// get email settings
+		$settings = get_option( 'affwp_settings' );
+
 		if ( empty( $type ) ) {
 			return false;
 		}
@@ -47,7 +50,6 @@ class Affiliate_WP_Emails {
 
 			case 'registration' :
 				
-				$settings = get_option( 'affwp_settings' );
 				$email    = $this->get_admin_notification_emails();
 
 				// subject
@@ -81,22 +83,26 @@ class Affiliate_WP_Emails {
 				$message  .= $this->get_application_accepted_body( $args );
 				$message  .= $this->get_email_body_footer();
 
-				$subject = apply_filters( 'affwp_application_accepted_subject', $subject, $args );
-				$message = apply_filters( 'affwp_application_accepted_email', $message, $args );
+				$subject  = apply_filters( 'affwp_application_accepted_subject', $subject, $args );
+				$message  = apply_filters( 'affwp_application_accepted_email', $message, $args );
 
 				break;
 
 			case 'new_referral' :
 
 				$email    = affwp_get_affiliate_email( $args['affiliate_id'] );
-				$subject  = __( 'Referral Awarded!', 'affiliate-wp' );
-				$amount   = html_entity_decode( affwp_currency_filter( $args['amount'] ), ENT_COMPAT, 'UTF-8' );
-				$message  = sprintf( __( "Congratulations %s!\n\n", "affiliate-wp" ), affiliate_wp()->affiliates->get_affiliate_name( $args['affiliate_id'] ) );
-				$message .= sprintf( __( "You have been awarded a new referral of %s on %s!\n\n", "affiliate-wp" ), $amount, home_url() );
-				$message .= sprintf( __( "Log into your affiliate area to view your earnings or disable these notifications: %s\n\n", "affiliate-wp" ), affiliate_wp()->login->get_login_url() );
 
-				$subject = apply_filters( 'affwp_new_referral_subject', $subject, $args );
-				$message = apply_filters( 'affwp_new_referral_email', $message, $args );
+				// subject
+				$subject  = ! empty( $settings['affiliate_new_referral_subject'] ) ? wp_strip_all_tags( $settings['affiliate_new_referral_subject'], true ) : __( 'Referral Awarded!', 'affiliate-wp' );
+				$subject  = affwp_do_email_tags( $subject, $args );
+
+				// // message
+				$message  = $this->get_email_body_header();
+				$message  .= $this->get_new_referral_body( $args );
+				$message  .= $this->get_email_body_footer();
+
+				$subject  = apply_filters( 'affwp_new_referral_subject', $subject, $args );
+				$message  = apply_filters( 'affwp_new_referral_email', $message, $args );
 
 				break;
 
@@ -120,7 +126,7 @@ class Affiliate_WP_Emails {
 	}
 
 	/**
-	 * Default Registration Body
+	 * Default Registration Email Body
 	 *
 	 * @since 1.2
 	 * @return string $email_body Body of the email
@@ -140,7 +146,7 @@ class Affiliate_WP_Emails {
 	}
 
 	/**
-	 * Default Application Accepted Body
+	 * Default Application Accepted Email Body
 	 *
 	 * @since 1.2
 	 * @return string $email_body Body of the email
@@ -157,6 +163,26 @@ class Affiliate_WP_Emails {
 		$email_body = affwp_do_email_tags( $email, $args );
 
 		return apply_filters( 'affwp_default_application_accepted_email', wpautop( $email_body ) );
+	}
+
+	/**
+	 * Default New Referral Email Body
+	 *
+	 * @since 1.2
+	 * @return string $email_body Body of the email
+	 */
+	public function get_new_referral_body( $args ) {
+		$settings = get_option( 'affwp_settings' );
+
+		$default_email_body  = sprintf( __( "Congratulations %s!", "affiliate-wp" ), "{affiliate_name}" ) . "\n\n";
+		$default_email_body .= sprintf( __( 'You have been awarded a new referral of %s on %s!', 'affiliate-wp' ), "{referral_amount}", "{site_url}" ) . "\n\n";
+		$default_email_body .= sprintf( __( 'Log in to your affiliate area to view your earnings or disable these notifications: %s', 'affiliate-wp' ), "{login_url}" ) . "\n\n";
+
+		$email = isset( $settings['affiliate_new_referral'] ) ? stripslashes( $settings['affiliate_new_referral'] ) : $default_email_body;
+
+		$email_body = affwp_do_email_tags( $email, $args );
+
+		return apply_filters( 'affwp_default_new_referral_email', wpautop( $email_body ) );
 	}
 
 	/**

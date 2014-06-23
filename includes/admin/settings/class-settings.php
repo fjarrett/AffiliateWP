@@ -277,18 +277,18 @@ class Affiliate_WP_Settings {
 						'type' => 'text',
 						'std'  => get_bloginfo( 'admin_email' )
 					),
-					'admin_registration_header' => array(
-						'name' => '<strong>' . __( 'Admin Registration', 'affiliate-wp' ) . '</strong>',
+					'admin_notifications_header' => array(
+						'name' => '<strong>' . __( 'Admin Notifications', 'affiliate-wp' ) . '</strong>',
 						'type' => 'header'
 					),
-					'admin_registration_subject' => array(
-						'name' => __( 'Admin Registration Subject', 'affiliate-wp' ),
-						'desc' => __( 'Enter the subject line for the admin registration email', 'affiliate-wp' ),
+					'affiliate_registration_subject' => array(
+						'name' => __( 'Affiliate Registration Subject', 'affiliate-wp' ),
+						'desc' => __( 'Enter the subject line for the affiliate registration email, sent to the admin', 'affiliate-wp' ),
 						'type' => 'text',
 						'std'  => __( 'New Affiliate Registration', 'affiliate-wp' )
 					),
-					'admin_registration' => array(
-						'name' => __( 'Admin Registration', 'affiliate-wp' ),
+					'affiliate_registration' => array(
+						'name' => __( 'Affiliate Registration', 'affiliate-wp' ),
 						'desc' => __( 'Enter the email that is sent to the admin after an affiliate registration has been submitted. HTML is accepted. Available template tags:', 'affiliate-wp' ) . '<br/>' . affwp_get_emails_tags_list(),
 						'type' => 'rich_editor',
 						'std'  => __( "A new affiliate has registered on your site,", "affiliate-wp" ) . " {site_url}\n\n" . __( "Name: ", "affiliate-wp" ) . "{name}"
@@ -300,7 +300,7 @@ class Affiliate_WP_Settings {
 						'std'  => get_bloginfo( 'admin_email' )
 					),
 					'affiliate_application_header' => array(
-						'name' => '<strong>' . __( 'Affiliate Application', 'affiliate-wp' ) . '</strong>',
+						'name' => '<strong>' . __( 'Affiliate Notifications', 'affiliate-wp' ) . '</strong>',
 						'type' => 'header'
 					),
 					'affiliate_application_accepted_subject' => array(
@@ -315,8 +315,18 @@ class Affiliate_WP_Settings {
 						'type' => 'rich_editor',
 						'std'  => sprintf( __( "Congratulations %s!\n\n", "affiliate-wp" ), "{affiliate_name}" ) . sprintf( __( "Your affiliate application on %s has been accepted!", "affiliate-wp"), "{site_url}" ) . "\n\n" . sprintf( __( "Log into your affiliate area at %s\n\n", "affiliate-wp" ), "{login_url}")
 					),
-
-
+					'affiliate_new_referral_subject' => array(
+						'name' => __( 'Affiliate Referral Subject', 'affiliate-wp' ),
+						'desc' => __( 'Enter the subject line for the affiliate referral email', 'affiliate-wp' ),
+						'type' => 'text',
+						'std'  => __( 'Referral Awarded!', 'affiliate-wp' )
+					),
+					'affiliate_new_referral' => array(
+						'name' => __( 'Affiliate Referral', 'affiliate-wp' ),
+						'desc' => __( 'Enter the email that is sent to the affiliate when their referral has been awarded. HTML is accepted. Available template tags:', 'affiliate-wp' ) . '<br/>' . affwp_get_emails_tags_list(),
+						'type' => 'rich_editor',
+						'std'  => sprintf( __( "Congratulations %s!\n\n", "affiliate-wp" ), "{affiliate_name}" ) . sprintf( __( "You have been awarded a new referral of %s on %s", "affiliate-wp"), "{referral_amount}", "{site_url}" ) . "\n\n" . sprintf( __( "Log in to your affiliate area to view your earnings or disable these notifications: %s\n\n", "affiliate-wp" ), "{login_url}")
+					),
 				)
 			),
 			/** Integration Settings */
