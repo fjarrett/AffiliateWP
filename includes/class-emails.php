@@ -101,12 +101,14 @@ class Affiliate_WP_Emails {
 	}
 
 	public function send( $email, $subject, $message ) {
+		$settings   = get_option( 'affwp_settings' );
+		$from_email = isset( $settings['from_email'] ) ? $settings['from_email'] : get_option('admin_email');
 
-		$headers   = array();
-		$headers[] = 'From: ' . stripslashes_deep( html_entity_decode( get_bloginfo( 'name' ), ENT_COMPAT, 'UTF-8' ) ) . ' <' . get_option( 'admin_email' ) . '>';
-		$headers[] = 'Reply-To: ' . get_option('admin_email');
-		$headers[] = "Content-Type: text/html; charset=utf-8\r\n";
-		$headers   = apply_filters( 'affwp_email_headers', $headers );
+		$headers    = array();
+		$headers[]  = 'From: ' . stripslashes_deep( html_entity_decode( get_bloginfo( 'name' ), ENT_COMPAT, 'UTF-8' ) ) . ' <' . get_option( 'admin_email' ) . '>';
+		$headers[]  = 'Reply-To: ' . $from_email . "\r\n";
+		$headers[]  = "Content-Type: text/html; charset=utf-8\r\n";
+		$headers    = apply_filters( 'affwp_email_headers', $headers );
 
 		wp_mail( $email, $subject, $message, $headers );
 
