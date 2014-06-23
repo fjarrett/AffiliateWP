@@ -6,6 +6,7 @@ class Affiliate_WP_Emails {
 
 		add_action( 'affwp_register_user', array( $this, 'notify_on_registration' ), 10, 3 );
 		add_action( 'affwp_set_affiliate_status', array( $this, 'notify_on_approval' ), 10, 3 );
+		add_action( 'affwp_set_affiliate_status', array( $this, 'notify_on_rejection' ), 10, 3 );
 		add_action( 'affwp_referral_accepted', array( $this, 'notify_of_new_referral' ), 10, 2 );
 
 	}
@@ -24,6 +25,15 @@ class Affiliate_WP_Emails {
 		}
 
 		affiliate_wp()->emails->notification( 'application_accepted', array( 'affiliate_id' => $affiliate_id ) );
+	}
+
+	public function notify_on_rejection( $affiliate_id = 0, $status = '', $old_status = '' ) {
+
+		if ( 'rejected' != $status || 'pending' != $old_status ) {
+			return;
+		}
+
+		affiliate_wp()->emails->notification( 'application_rejected', array( 'affiliate_id' => $affiliate_id ) );
 	}
 
 	public function notify_of_new_referral( $affiliate_id = 0, $referral ) {
@@ -87,6 +97,24 @@ class Affiliate_WP_Emails {
 				$message  = apply_filters( 'affwp_application_accepted_email', $message, $args );
 
 				break;
+
+			case 'application_rejected' :
+
+				$email    = affwp_get_affiliate_email( $args['affiliate_id'] );
+
+				// subject
+				$subject  = ! empty( $settings['affiliate_application_rejected_subject'] ) ? wp_strip_all_tags( $settings['affiliate_application_rejected_subject'], true ) : __( 'Affiliate Application Rejected', 'affiliate-wp' );
+				$subject  = affwp_do_email_tags( $subject, $args );
+
+				// message
+				$message  = $this->get_email_body_header();
+				$message  .= $this->get_application_rejected_body( $args );
+				$message  .= $this->get_email_body_footer();
+
+				$subject  = apply_filters( 'affwp_application_rejected_subject', $subject, $args );
+				$message  = apply_filters( 'affwp_application_rejected_email', $message, $args );
+
+				break;	
 
 			case 'new_referral' :
 
@@ -163,6 +191,25 @@ class Affiliate_WP_Emails {
 		$email_body = affwp_do_email_tags( $email, $args );
 
 		return apply_filters( 'affwp_default_application_accepted_email', wpautop( $email_body ) );
+	}
+
+	/**
+	 * Default Application Rejected Email Body
+	 *
+	 * @since 1.2
+	 * @return string $email_body Body of the email
+	 */
+	public function get_application_rejected_body( $args ) {
+		$settings = get_option( 'affwp_settings' );
+
+		$default_email_body  = sprintf( __( "Hi %s,", "affiliate-wp" ), "{affiliate_name}" ) . "\n\n";
+		$default_email_body .= sprintf( __( 'We regret to inform you that your recent affiliate application on %s has been rejected.', 'affiliate-wp' ), "{site_url}" ) . "\n\n";
+
+		$email = isset( $settings['affiliate_application_rejected'] ) ? stripslashes( $settings['affiliate_application_rejected'] ) : $default_email_body;
+
+		$email_body = affwp_do_email_tags( $email, $args );
+
+		return apply_filters( 'affwp_default_application_rejected_email', wpautop( $email_body ) );
 	}
 
 	/**

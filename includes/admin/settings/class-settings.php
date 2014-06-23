@@ -315,6 +315,18 @@ class Affiliate_WP_Settings {
 						'type' => 'rich_editor',
 						'std'  => sprintf( __( "Congratulations %s!\n\n", "affiliate-wp" ), "{affiliate_name}" ) . sprintf( __( "Your affiliate application on %s has been accepted!", "affiliate-wp"), "{site_url}" ) . "\n\n" . sprintf( __( "Log into your affiliate area at %s\n\n", "affiliate-wp" ), "{login_url}")
 					),
+					'affiliate_application_rejected_subject' => array(
+						'name' => __( 'Affiliate Application Rejected Subject', 'affiliate-wp' ),
+						'desc' => __( 'Enter the subject line for the affiliate application rejected email', 'affiliate-wp' ),
+						'type' => 'text',
+						'std'  => __( 'Affiliate Application Rejected', 'affiliate-wp' )
+					),
+					'affiliate_application_rejected' => array(
+						'name' => __( 'Affiliate Application Rejected', 'affiliate-wp' ),
+						'desc' => __( 'Enter the email that is sent to the affiliate if their affiliate registration is rejected. HTML is accepted. Available template tags:', 'affiliate-wp' ) . '<br/>' . affwp_get_emails_tags_list(),
+						'type' => 'rich_editor',
+						'std'  => sprintf( __( "Hi %s,\n\n", "affiliate-wp" ), "{affiliate_name}" ) . sprintf( __( "We regret to inform you that your recent affiliate application on %s has been rejected.", "affiliate-wp"), "{site_url}" ) . "\n\n"
+					),
 					'affiliate_new_referral_subject' => array(
 						'name' => __( 'Affiliate Referral Subject', 'affiliate-wp' ),
 						'desc' => __( 'Enter the subject line for the affiliate referral email', 'affiliate-wp' ),
