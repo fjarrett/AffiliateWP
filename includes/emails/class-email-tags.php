@@ -253,6 +253,11 @@ function affwp_setup_email_tags() {
 			'description' => __( 'Your site URL', 'affiliate-wp' ),
 			'function'    => 'affwp_email_tag_site_url'
 		),
+		array(
+			'tag'         => 'login_url',
+			'description' => __( 'The affiliate login URL', 'affiliate-wp' ),
+			'function'    => 'affwp_email_tag_login_url'
+		),
 
 	);
 
@@ -266,6 +271,7 @@ function affwp_setup_email_tags() {
 
 }
 add_action( 'affwp_add_email_tags', 'affwp_setup_email_tags' );
+
 
 
 /**
@@ -299,4 +305,16 @@ function affwp_email_tag_affiliate_name( $args ) {
  */
 function affwp_email_tag_site_url() {
 	return home_url();
+}
+
+
+/**
+ * Email template tag: login_url
+ * The affiliate login URL
+ *
+ *
+ * @return string affiliate login URL
+ */
+function affwp_email_tag_login_url() {
+	return affiliate_wp()->login->get_login_url();
 }

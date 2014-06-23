@@ -71,10 +71,15 @@ class Affiliate_WP_Emails {
 			case 'application_accepted' :
 
 				$email    = affwp_get_affiliate_email( $args['affiliate_id'] );
-				$subject  = __( 'Affiliate Application Accepted', 'affiliate-wp' );
-				$message  = sprintf( __( "Congratulations %s!\n\n", "affiliate-wp" ), affiliate_wp()->affiliates->get_affiliate_name( $args['affiliate_id'] ) );
-				$message .= sprintf( __( "Your affiliate application on %s has been accepted!\n\n", "affiliate-wp" ), home_url() );
-				$message .= sprintf( __( "Log into your affiliate area at %s\n\n", "affiliate-wp" ), affiliate_wp()->login->get_login_url() );
+
+				// subject
+				$subject  = ! empty( $settings['affiliate_application_accepted_subject'] ) ? wp_strip_all_tags( $settings['affiliate_application_accepted_subject'], true ) : __( 'Affiliate Application Accepted', 'affiliate-wp' );
+				$subject  = affwp_do_email_tags( $subject, $args );
+
+				// message
+				$message  = $this->get_email_body_header();
+				$message  .= $this->get_application_accepted_body( $args );
+				$message  .= $this->get_email_body_footer();
 
 				$subject = apply_filters( 'affwp_application_accepted_subject', $subject, $args );
 				$message = apply_filters( 'affwp_application_accepted_email', $message, $args );
@@ -123,7 +128,7 @@ class Affiliate_WP_Emails {
 	public function get_registration_body( $args ) {
 		$settings = get_option( 'affwp_settings' );
 
-		$default_email_body  = "A new affiliate has registered on your site, " . home_url() ."\n\n";
+		$default_email_body  = sprintf( __( "A new affiliate has registered on your site, %s", "affiliate-wp" ), home_url() ) ."\n\n";
 		$default_email_body .= sprintf( __( 'Name: %s', 'affiliate-wp' ), $args['name'] ) . "\n\n";
 		$default_email_body .= "{sitename}";
 
@@ -132,6 +137,26 @@ class Affiliate_WP_Emails {
 		$email_body = affwp_do_email_tags( $email, $args );
 
 		return apply_filters( 'affwp_default_registration_email', wpautop( $email_body ) );
+	}
+
+	/**
+	 * Default Application Accepted Body
+	 *
+	 * @since 1.2
+	 * @return string $email_body Body of the email
+	 */
+	public function get_application_accepted_body( $args ) {
+		$settings = get_option( 'affwp_settings' );
+
+		$default_email_body  = sprintf( __( "Congratulations %s!", "affiliate-wp" ), "{affiliate_name}" ) . "\n\n";
+		$default_email_body .= sprintf( __( 'Your affiliate application on %s has been accepted!', 'affiliate-wp' ), "{site_url}" ) . "\n\n";
+		$default_email_body .= sprintf( __( 'Log into your affiliate area at %s', 'affiliate-wp' ), "{login_url}" ) . "\n\n";
+
+		$email = isset( $settings['affiliate_application_accepted'] ) ? stripslashes( $settings['affiliate_application_accepted'] ) : $default_email_body;
+
+		$email_body = affwp_do_email_tags( $email, $args );
+
+		return apply_filters( 'affwp_default_application_accepted_email', wpautop( $email_body ) );
 	}
 
 	/**

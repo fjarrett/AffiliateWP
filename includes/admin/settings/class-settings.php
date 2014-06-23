@@ -277,6 +277,10 @@ class Affiliate_WP_Settings {
 						'type' => 'text',
 						'std'  => get_bloginfo( 'admin_email' )
 					),
+					'admin_registration_header' => array(
+						'name' => '<strong>' . __( 'Admin Registration', 'affiliate-wp' ) . '</strong>',
+						'type' => 'header'
+					),
 					'admin_registration_subject' => array(
 						'name' => __( 'Admin Registration Subject', 'affiliate-wp' ),
 						'desc' => __( 'Enter the subject line for the admin registration email', 'affiliate-wp' ),
@@ -295,6 +299,24 @@ class Affiliate_WP_Settings {
 						'type' => 'textarea',
 						'std'  => get_bloginfo( 'admin_email' )
 					),
+					'affiliate_application_header' => array(
+						'name' => '<strong>' . __( 'Affiliate Application', 'affiliate-wp' ) . '</strong>',
+						'type' => 'header'
+					),
+					'affiliate_application_accepted_subject' => array(
+						'name' => __( 'Affiliate Application Accepted Subject', 'affiliate-wp' ),
+						'desc' => __( 'Enter the subject line for the affiliate application accepted email', 'affiliate-wp' ),
+						'type' => 'text',
+						'std'  => __( 'Affiliate Application Accepted', 'affiliate-wp' )
+					),
+					'affiliate_application_accepted' => array(
+						'name' => __( 'Affiliate Application Accepted', 'affiliate-wp' ),
+						'desc' => __( 'Enter the email that is sent to the affiliate once their affiliate registration has been accepted. HTML is accepted. Available template tags:', 'affiliate-wp' ) . '<br/>' . affwp_get_emails_tags_list(),
+						'type' => 'rich_editor',
+						'std'  => sprintf( __( "Congratulations %s!\n\n", "affiliate-wp" ), "{affiliate_name}" ) . sprintf( __( "Your affiliate application on %s has been accepted!", "affiliate-wp"), "{site_url}" ) . "\n\n" . sprintf( __( "Log into your affiliate area at %s\n\n", "affiliate-wp" ), "{login_url}")
+					),
+
+
 				)
 			),
 			/** Integration Settings */
