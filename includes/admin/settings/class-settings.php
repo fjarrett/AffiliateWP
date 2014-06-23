@@ -262,6 +262,36 @@ class Affiliate_WP_Settings {
 					)
 				)
 			),
+			/** Email Settings */
+			'emails' => apply_filters( 'affwp_settings_emails',
+				array(
+					'from_name' => array(
+						'name' => __( 'From Name', 'affiliate-wp' ),
+						'desc' => __( 'The name notifications come from. This should probably be your site name.', 'affiliate-wp' ),
+						'type' => 'text',
+						'std'  => get_bloginfo( 'name' )
+					),
+					'from_email' => array(
+						'name' => __( 'From Email', 'affiliate-wp' ),
+						'desc' => __( 'Email to send notifications from. This will act as the "from" and "reply-to" address.', 'affiliate-wp' ),
+						'type' => 'text',
+						'std'  => get_bloginfo( 'admin_email' )
+					),
+					'admin_registration_subject' => array(
+						'name' => __( 'Admin Registration Subject', 'affiliate-wp' ),
+						'desc' => __( 'Enter the subject line for the admin registration email', 'affiliate-wp' ),
+						'type' => 'text',
+						'std'  => __( 'New Affiliate Registration', 'affiliate-wp' )
+					),
+					'admin_registration' => array(
+						'name' => __( 'Admin Registration', 'affiliate-wp' ),
+						'desc' => __( 'Enter the email that is sent to the admin after an affiliate registration has been submitted. HTML is accepted. Available template tags:', 'affiliate-wp' ),
+						'type' => 'rich_editor',
+						'std'  => __( "A new affiliate has registered on your site,", "affiliate-wp" ) . " {site_url}\n\n" . __( "Name: ", "affiliate-wp" ) . "{name}"
+					),
+
+				)
+			),
 			/** Integration Settings */
 			'integrations' => apply_filters( 'affwp_settings_integrations',
 				array(
@@ -604,14 +634,13 @@ class Affiliate_WP_Settings {
 			$value = isset( $args['std'] ) ? $args['std'] : '';
 
 		ob_start();
-		wp_editor( stripslashes( $value ), 'affwp_settings[' . $args['id'] . ']', array( 'textarea_name' => 'affwp_settings[' . $args['id'] . ']' ) );
+		wp_editor( stripslashes( $value ), 'affwp_settings_' . $args['id'], array( 'textarea_name' => 'affwp_settings[' . $args['id'] . ']' ) );
 		$html = ob_get_clean();
 
 		$html .= '<br/><label for="affwp_settings[' . $args['id'] . ']"> '  . $args['desc'] . '</label>';
 
 		echo $html;
 	}
-
 
 	public function activate_license() {
 

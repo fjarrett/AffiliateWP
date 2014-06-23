@@ -12,7 +12,7 @@ class Affiliate_WP_Emails {
 
 	public function notify_on_registration( $affiliate_id = 0, $status = '', $args = array() ) {
 
-		if( affiliate_wp()->settings->get( 'registration_notifications' ) ) {
+		if ( affiliate_wp()->settings->get( 'registration_notifications' ) ) {
 			affiliate_wp()->emails->notification( 'registration', array( 'affiliate_id' => $affiliate_id, 'name' => $args['display_name'] ) );
 		}
 	}
@@ -30,7 +30,7 @@ class Affiliate_WP_Emails {
 
 		$user_id = affwp_get_affiliate_user_id( $affiliate_id );
 
-		if( ! get_user_meta( $user_id, 'affwp_referral_notifications', true ) ) {
+		if ( ! get_user_meta( $user_id, 'affwp_referral_notifications', true ) ) {
 			return;
 		}
 
@@ -39,26 +39,30 @@ class Affiliate_WP_Emails {
 
 	public function notification( $type = '', $args = array() ) {
 
-		if( empty( $type ) ) {
+		if ( empty( $type ) ) {
 			return false;
 		}
 
-		switch( $type ) {
+		switch ( $type ) {
 
 			case 'registration' :
-
+				
+				$settings = get_option( 'affwp_settings' );
 				$email    = apply_filters( 'affwp_registration_admin_email', get_option( 'admin_email' ) );
-				$subject  = __( 'New Affiliate Registration', 'affiliate-wp' );
-				$message  = "A new affiliate has registered on your site, " . home_url() ."\n\n";
-				$message .= sprintf( __( 'Name: %s', 'affiliate-wp' ), $args['name'] ) . "\n\n";
 
-				if( affiliate_wp()->settings->get( 'require_approval' ) ) {
-					$message .= sprintf( "Review pending applications: %s\n\n", admin_url( 'admin.php?page=affiliate-wp-affiliates&status=pending' ) );
+				// subject
+				$subject  = ! empty( $settings['admin_registration_subject'] ) ? wp_strip_all_tags( $settings['admin_registration_subject'], true ) : __( 'New Affiliate Registration', 'affiliate-wp' );
+				$subject  = affwp_do_email_tags( $subject, $args );
 
+				// message
+				$message  = $this->get_registration_body( $args );
+
+				if ( affiliate_wp()->settings->get( 'require_approval' ) ) {
+					$message .= sprintf( "\n\nReview pending applications: %s\n\n", admin_url( 'admin.php?page=affiliate-wp-affiliates&status=pending' ) );
 				}
-
-				$subject = apply_filters( 'affwp_registration_subject', $subject, $args );
-				$message = apply_filters( 'affwp_registration_email', $message, $args );
+				
+				$subject  = apply_filters( 'affwp_registration_subject', $subject, $args );
+				$message  = apply_filters( 'affwp_registration_email', $message, $args );
 
 				break;
 
@@ -102,6 +106,26 @@ class Affiliate_WP_Emails {
 
 		wp_mail( $email, $subject, $message, $headers );
 
+	}
+
+	/**
+	 * Default Registration Body
+	 *
+	 * @since 1.2
+	 * @return string $email_body Body of the email
+	 */
+	public function get_registration_body( $args ) {
+		$settings = get_option( 'affwp_settings' );
+
+		$default_email_body  = "A new affiliate has registered on your site, " . home_url() ."\n\n";
+		$default_email_body .= sprintf( __( 'Name: %s', 'affiliate-wp' ), $args['name'] ) . "\n\n";
+		$default_email_body .= "{sitename}";
+
+		$email = isset( $settings['admin_registration'] ) ? stripslashes( $settings['admin_registration'] ) : $default_email_body;
+
+		$email_body = affwp_do_email_tags( $email, $args );
+
+		return apply_filters( 'affwp_default_registration_email', $email_body );
 	}
 
 }

@@ -59,6 +59,7 @@ final class Affiliate_WP {
 	public $register;
 	public $integrations;
 	public $emails;
+	public $email_tags;
 
 
 	/**
@@ -94,6 +95,7 @@ final class Affiliate_WP {
 			self::$instance->register     = new Affiliate_WP_Register;
 			self::$instance->integrations = new Affiliate_WP_Integrations;
 			self::$instance->emails       = new Affiliate_WP_Emails;
+			self::$instance->email_tags   = new Affiliate_WP_Emails_Template_Tags;
 
 			self::$instance->updater();
 		}
@@ -197,6 +199,7 @@ final class Affiliate_WP {
 		}
 
 		require_once AFFILIATEWP_PLUGIN_DIR . 'includes/class-emails.php';
+		require_once AFFILIATEWP_PLUGIN_DIR . 'includes/emails/class-email-tags.php';
 		require_once AFFILIATEWP_PLUGIN_DIR . 'includes/class-graph.php';
 		require_once AFFILIATEWP_PLUGIN_DIR . 'includes/class-referrals-graph.php';
 		require_once AFFILIATEWP_PLUGIN_DIR . 'includes/class-visits-graph.php';
