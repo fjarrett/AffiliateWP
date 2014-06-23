@@ -48,7 +48,7 @@ class Affiliate_WP_Emails {
 			case 'registration' :
 				
 				$settings = get_option( 'affwp_settings' );
-				$email    = apply_filters( 'affwp_registration_admin_email', get_option( 'admin_email' ) );
+				$email    = $this->get_admin_notification_emails();
 
 				// subject
 				$subject  = ! empty( $settings['admin_registration_subject'] ) ? wp_strip_all_tags( $settings['admin_registration_subject'], true ) : __( 'New Affiliate Registration', 'affiliate-wp' );
@@ -126,6 +126,22 @@ class Affiliate_WP_Emails {
 		$email_body = affwp_do_email_tags( $email, $args );
 
 		return apply_filters( 'affwp_default_registration_email', $email_body );
+	}
+
+	/**
+	 * Retrieves the emails for which admin notifications are sent to (these can be
+	 * changed in the AffiliateWP Settings)
+	 *
+	 * @since 1.2
+	 * @return mixed
+	 */
+	public function get_admin_notification_emails() {
+		$settings = get_option( 'affwp_settings' );
+
+		$emails = isset( $settings['admin_notification_emails'] ) && strlen( trim( $settings['admin_notification_emails'] ) ) > 0 ? $settings['admin_notification_emails'] : get_option( 'admin_email' );
+		$emails = array_map( 'trim', explode( "\n", $emails ) );
+
+		return apply_filters( 'affwp_admin_notification_emails', $emails );
 	}
 
 }

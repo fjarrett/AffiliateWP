@@ -285,11 +285,16 @@ class Affiliate_WP_Settings {
 					),
 					'admin_registration' => array(
 						'name' => __( 'Admin Registration', 'affiliate-wp' ),
-						'desc' => __( 'Enter the email that is sent to the admin after an affiliate registration has been submitted. HTML is accepted. Available template tags:', 'affiliate-wp' ),
+						'desc' => __( 'Enter the email that is sent to the admin after an affiliate registration has been submitted. HTML is accepted. Available template tags:', 'affiliate-wp' ) . '<br/>' . affwp_get_emails_tags_list(),
 						'type' => 'rich_editor',
 						'std'  => __( "A new affiliate has registered on your site,", "affiliate-wp" ) . " {site_url}\n\n" . __( "Name: ", "affiliate-wp" ) . "{name}"
 					),
-
+					'admin_notification_emails' => array(
+						'name' => __( 'Admin Notification Emails', 'affiliate-wp' ),
+						'desc' => __( 'Enter the email address(es) that should receive a notification anytime an affiliate registers, one per line', 'affiliate-wp' ),
+						'type' => 'textarea',
+						'std'  => get_bloginfo( 'admin_email' )
+					),
 				)
 			),
 			/** Integration Settings */
