@@ -126,11 +126,12 @@ class Affiliate_WP_Gravity_Forms extends Affiliate_WP_Base {
 	 */
 	public function save_settings( $form ) {
 
-	    $form['gform_allow_referrals'] = rgpost( 'gform_allow_referrals' );
+		$form['gform_allow_referrals'] = rgpost( 'gform_allow_referrals' );
 
-	    return $form;
+		return $form;
 
 	}
 
 }
+
 new Affiliate_WP_Gravity_Forms;
